@@ -1,4 +1,3 @@
-import Toybox.Application.Properties;
 import Toybox.Lang;
 
 using Toybox.WatchUi;
@@ -8,33 +7,35 @@ class BCTidesDelegate extends WatchUi.BehaviorDelegate {
 
     function initialize(associatedView as BCTidesView) {
         view = associatedView;
-		WatchUi.BehaviorDelegate.initialize();
-	}
+        WatchUi.BehaviorDelegate.initialize();
+    }
 
-    function onNextPage() {
+    function onNextPage() as Boolean {
         view.nextPage();
         WatchUi.requestUpdate();
         return true;
     }
 
-    function onPreviousPage() {
+    function onPreviousPage() as Boolean {
         view.prevPage();
         WatchUi.requestUpdate();
         return true;
     }
 
-    function onMenu() {
+    function onMenu() as Boolean {
         MainMenu.pushMenu();
         return true;
     }
 
-	function onStateUpdated(state) {
-		WatchUi.requestUpdate();
-	}
+    function onStateUpdated(state) as Void {
+        WatchUi.requestUpdate();
+    }
 
-	function onSelect() {
-        view.cycleStations();
+    // Station cycling is available via Menu > Next Station
+    function onSelect() as Boolean {
+        view.toggleView();
         WatchUi.requestUpdate();
         return true;
-	}
-}   
+    }
+
+}

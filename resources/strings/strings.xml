@@ -1,11 +1,53 @@
 <strings>
-    <string id="AppName">BC Tides</string>
+    <string id="AppName">GarTides</string>
     <string id="appVersionTitle">Version</string>
 
     <string id="mainMenuTitle">Settings</string>
 
-    <string id="MainMenuLabel_nearby">Nearby</string>
-    <string id="MainMenuLabel_favorites">Favorites</string>
+    <string id="apiKeyTitle">Stormglass API Key</string>
+    <string id="apiKeyPrompt">Enter your Stormglass API key from stormglass.io</string>
+    <string id="apiKeyNotSet">Set API key in settings.</string>
+
+    <!-- Station settings labels (Garmin Connect app) -->
+    <string id="station1NameTitle">Station 1 Name</string>
+    <string id="station2NameTitle">Station 2 Name</string>
+    <string id="station3NameTitle">Station 3 Name</string>
+    <string id="stationNamePrompt">Display name for this station</string>
+
+    <string id="station1UseGPSTitle">Station 1: Use GPS</string>
+    <string id="station2UseGPSTitle">Station 2: Use GPS</string>
+    <string id="station3UseGPSTitle">Station 3: Use GPS</string>
+    <string id="stationUseGPSPrompt">Use GPS position instead of fixed coordinates</string>
+
+    <string id="station1LatTitle">Station 1 Latitude</string>
+    <string id="station2LatTitle">Station 2 Latitude</string>
+    <string id="station3LatTitle">Station 3 Latitude</string>
+    <string id="stationLatPrompt">Decimal degrees (e.g. 48.4284)</string>
+
+    <string id="station1LngTitle">Station 1 Longitude</string>
+    <string id="station2LngTitle">Station 2 Longitude</string>
+    <string id="station3LngTitle">Station 3 Longitude</string>
+    <string id="stationLngPrompt">Decimal degrees (e.g. -123.3656)</string>
+
+    <string id="station1HeightOffsetTitle">Station 1 Height Offset</string>
+    <string id="station2HeightOffsetTitle">Station 2 Height Offset</string>
+    <string id="station3HeightOffsetTitle">Station 3 Height Offset</string>
+    <string id="stationHeightOffsetPrompt">Meters added to all heights for this station. Use to match local tide tables (always in meters, regardless of display units).</string>
+
+    <string id="datumSettingTitle">Tide Datum</string>
+    <string id="datumSettingPrompt">Reference level for tide heights. Change requires a data refresh.</string>
+    <string id="datumSettingMSL">MSL (Mean Sea Level)</string>
+    <string id="datumSettingMLLW">MLLW (closer to Chart Datum)</string>
+
+    <!-- On-watch station menu -->
+    <string id="mainMenuLabelNextStation">Next Station</string>
+    <string id="mainMenuLabelManageStations">Manage Stations</string>
+    <string id="stationSourceTitle">Source</string>
+    <string id="stationSourceGPS">GPS</string>
+    <string id="stationSourceFixed">Fixed</string>
+    <string id="stationSaveGPS">Save GPS as Location</string>
+    <string id="stationNotConfigured">Not configured</string>
+    <string id="stationDefaultName">Station</string>
 
     <string id="mainMenuLabelDisplayOptions">Display Options</string>
     <string id="displayOptionsMenuTitle">Display\nOptions</string>
@@ -25,21 +67,11 @@
     <string id="labelSettingValTime">Time</string>
     <string id="labelSettingValNone">None</string>
 
-    <string id="displaySettingTitle">Display</string>
-    <string id="displaySettingPrompt">Select display mode</string>
-    <string id="displaySettingValGraph">Graph</string>
-    <string id="displaySettingValTable">Table</string>
-
-    <string id="zoneSettingTitle">Zone</string>
-    <string id="zoneSettingPrompt">Select zone</string>
-    <string id="zoneSettingValSouth">South BC</string>
-    <string id="zoneSettingValNorth">North BC</string>
-
     <string id="mainMenuLabelGetData">Get Data</string>
-    <string id="getDataMenuAll">All</string>
+    <string id="getDataMenuAll">All Stations</string>
 
-    <string id="mainMenuLabelGetLocation">Get Location</string>
-    <string id="mainMenuLabelGetLocationSub">Find GPS</string>
+    <string id="mainMenuLabelGetLocation">Refresh GPS</string>
+    <string id="mainMenuLabelGetLocationSub">Find GPS fix</string>
 
     <string id="backgroundDownloadSettingTitle">Auto-Update Data</string>
     <string id="backgroundDownloadSettingPrompt">Keep tide data updated by downloading in the background.</string>
@@ -49,30 +81,14 @@
     <string id="fillGraphTitle">Fill Graph</string>
     <string id="fillGraphPrompt">Fill the tide graph with color</string>
 
-    <string id="mainMenuLabelSelectStation">Select Station</string>
-    <string id="mainMenuLabelManageStations">Manage Stations</string>
-    <string id="selectStationMenuTitle">Station</string>
-    <string id="selectStationMenuNearest">Nearest</string>
-    <string id="selectStationMenuRecent">Recent</string>
-    <string id="selectStationMenuSearch">Search</string>
-    <string id="selectStationMenuDelete">Delete</string>
-
-    <string id="stationSearchCharacterCountMessage">Must be at least 2 characters.</string>
-    <string id="stationSearchResultsMenuHeading">Search\nResults</string>
-    <string id="stationSearchNoResults">No results!</string>
-    <string id="stationSearchNoMoreResults">No more results!</string>
-
-    <string id="loadMoreMenuPage">Page</string>
-
-    <string id="manageStationsMenuAdd">+ Add</string>
-
     <!-- Warning/Error/Info Messages -->
-    <string id="noDataAvailableForStation">No data available for station.</string>
-    <string id="noDataAvailableForDate">No data available for date.</string>
+    <string id="noDataAvailableForStation">No data.\nHold MENU for options.</string>
+    <string id="noDataAvailableForDate">No data for this date.</string>
     <string id="ranOutOfData">Ran out of data!</string>
     <string id="dataReceivedMessage">Tide data received.</string>
-    <string id="noStationSelectedMessage">Select a station first!</string>
-    <string id="noStationSelectedStationName">No station selected.</string>
+    <string id="noStationConfiguredMessage">Configure a station\nin settings or menu.</string>
+    <string id="noStationSelectedStationName">No station</string>
+    <string id="waitingForGPS">Waiting for GPS...</string>
 
     <!-- Prompt Messages -->
     <string id="downloadDataPrompt">Download tide data?</string>

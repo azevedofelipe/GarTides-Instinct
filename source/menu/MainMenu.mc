@@ -1,11 +1,10 @@
-import Toybox.Application.Properties;
 import Toybox.Graphics;
-import Toybox.Position;
 
 using Toybox.WatchUi;
 
 class MainMenuDelegate extends WatchUi.Menu2InputDelegate {
     public enum {
+        MENU_NEXT_STATION_ID,
         MENU_MANAGE_STATIONS_ID,
         MENU_DISPLAY_OPTIONS_ID,
         MENU_STATION_DATA_ID,
@@ -17,7 +16,11 @@ class MainMenuDelegate extends WatchUi.Menu2InputDelegate {
     }
 
     function onSelect(item) {
-        if (item.getId() == MENU_GET_GPS_ID) {
+        if (item.getId() == MENU_NEXT_STATION_ID) {
+            getApp().view.cycleStations();
+            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+            WatchUi.requestUpdate();
+        } else if (item.getId() == MENU_GET_GPS_ID) {
             getApp().view.onPosition(Toybox.Position.getInfo());
             WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
         } else if (item.getId() == MENU_MANAGE_STATIONS_ID) {
@@ -26,8 +29,6 @@ class MainMenuDelegate extends WatchUi.Menu2InputDelegate {
             DisplayOptionsMenu.pushMenu();
         } else if (item.getId() == MENU_STATION_DATA_ID) {
             StationDataMenu.pushMenu();
-        } else if (item instanceof MultiToggleMenuItem) {
-            item.next();
         }
     }
 }
@@ -35,45 +36,39 @@ class MainMenuDelegate extends WatchUi.Menu2InputDelegate {
 module MainMenu {
     function pushMenu() {
         var menu = new WatchUi.CustomMenu(getApp().screenHeight / 3, Graphics.COLOR_WHITE, {
-                :title => new CustomMenuTitle(Rez.Strings.mainMenuTitle),
-                :theme => null
-            });
+            :title => new CustomMenuTitle(Rez.Strings.mainMenuTitle),
+            :theme => null
+        });
 
-        // Select Station
-        menu.addItem(
-            new BasicCustomMenuItem(
-                MainMenuDelegate.MENU_MANAGE_STATIONS_ID,
-                Rez.Strings.mainMenuLabelManageStations,
-                null
-            )
-        );
+        menu.addItem(new BasicCustomMenuItem(
+            MainMenuDelegate.MENU_NEXT_STATION_ID,
+            Rez.Strings.mainMenuLabelNextStation,
+            null
+        ));
 
-        // Display Options
-        menu.addItem(
-            new BasicCustomMenuItem(
-                MainMenuDelegate.MENU_DISPLAY_OPTIONS_ID,
-                Rez.Strings.mainMenuLabelDisplayOptions,
-                null
-            )
-        );
+        menu.addItem(new BasicCustomMenuItem(
+            MainMenuDelegate.MENU_MANAGE_STATIONS_ID,
+            Rez.Strings.mainMenuLabelManageStations,
+            null
+        ));
 
-        // Station Data
-        menu.addItem(
-            new BasicCustomMenuItem(
-                MainMenuDelegate.MENU_STATION_DATA_ID,
-                Rez.Strings.mainMenuLabelStationData,
-                null
-            )
-        );
+        menu.addItem(new BasicCustomMenuItem(
+            MainMenuDelegate.MENU_DISPLAY_OPTIONS_ID,
+            Rez.Strings.mainMenuLabelDisplayOptions,
+            null
+        ));
 
-        // Get Location
-        menu.addItem(
-            new BasicCustomMenuItem(
-                MainMenuDelegate.MENU_GET_GPS_ID,
-                Rez.Strings.mainMenuLabelGetLocation,
-                Rez.Strings.mainMenuLabelGetLocationSub
-            )
-        );
+        menu.addItem(new BasicCustomMenuItem(
+            MainMenuDelegate.MENU_STATION_DATA_ID,
+            Rez.Strings.mainMenuLabelStationData,
+            null
+        ));
+
+        menu.addItem(new BasicCustomMenuItem(
+            MainMenuDelegate.MENU_GET_GPS_ID,
+            Rez.Strings.mainMenuLabelGetLocation,
+            Rez.Strings.mainMenuLabelGetLocationSub
+        ));
 
         WatchUi.pushView(menu, new MainMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
     }

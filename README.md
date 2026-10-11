@@ -1,170 +1,177 @@
-<h1 align="center"> BC Tides </h1>
-<div align="center">
-   
-[![GitHub license](https://img.shields.io/badge/License-MIT-brightgreen.svg?style=flat-square)](https://github.com/bain-syrowik/bc_tides/blob/main/LICENSE.txt)
-[![GitHub contributors](https://img.shields.io/github/contributors/bain-syrowik/bc_tides.svg)](https://GitHub.com/bain-syrowik/bc_tides/graphs/contributors/)
-[![GitHub issues](https://img.shields.io/github/issues/bain-syrowik/bc_tides.svg)](https://GitHub.com/bain-syrowik/bc_tides/issues/)
-[![GitHub pull-requests](https://img.shields.io/github/issues-pr/bain-syrowik/bc_tides.svg)](https://GitHub.com/bain-syrowik/bc_tides/pulls/)
-[![GitHub watchers](https://img.shields.io/github/watchers/bain-syrowik/bc_tides.svg?style=social&label=Watch)](https://GitHub.com/bain-syrowik/bc_tides/watchers/)
-[![GitHub forks](https://img.shields.io/github/forks/bain-syrowik/bc_tides.svg?style=social&label=Fork)](https://GitHub.com/bain-syrowik/bc_tides/network/)
-[![GitHub stars](https://img.shields.io/github/stars/bain-syrowik/bc_tides.svg?style=social&label=Star)](https://GitHub.com/bain-syrowik/bc_tides/stargazers/)
+# GarTides
 
-</div>
+A Garmin Connect IQ widget for tide predictions at any location worldwide, optimised for the **Garmin Instinct 3 Solar 45mm**. Forked from [bc_tides](https://github.com/bain-syrowik/bc_tides) and adapted for use with the [Stormglass API](https://stormglass.io).
 
-## What is BC Tides?
-
-A Garmin Connect IQ Widget App for Tides in British Columbia.
+---
 
 ## Features
 
-Support for all tide stations that provide tide predictions in British Columbia.
+- **Tide table** — shows all high and low tide events for the selected day, with time and height
+- **Tide graph** — the day's tide curve with the high/low table underneath; press SELECT to switch between table and graph
+- **7-day view** — swipe forward/back through today and the next 6 days
+- **3 configurable stations** — set fixed coordinates or use GPS for any location in the world
+- **Moon phase indicator** — displayed in the top-right circle of the Instinct 3 display, with icon and label
+- **Units** — metric (m) or imperial (ft), configurable in Garmin Connect settings
+- **Auto data refresh** — downloads fresh tide data in the background once per day (~2am)
+- **Manual refresh** — trigger a download on demand from inside the app
+- **Glance view** — shows upcoming tide at a glance from the watch face widget screen
+- **English and French localisation** (app settings labels)
 
-Glance, graph, and table views:
+---
 
-![Glance view image](doc/img/yvr_tide_glance_full.png)
-![Graph view image](doc/img/yvr_tide_graph_full.png)
-![Table view image](doc/img/yvr_tide_table_full.png)
+## How to Use
 
+### Navigation
+
+| Button | Action |
+|--------|--------|
+| **UP / DOWN** | Scroll through days (today + 6 days ahead) |
+| **SELECT** (short press) | Toggle between tide table and tide graph |
+| **MENU** (long press) | Open the settings menu |
+
+### Settings Menu
+
+Accessed by long-pressing the **MENU** button (top-left on Instinct 3):
+
+- **Next Station** — cycles to the next configured station
+- **Manage Stations** — configure station names, coordinates, and GPS use
+- **Display Options** — change units and other display preferences
+- **Station Data** — view raw data info for the current station
+- **Refresh GPS** — force a GPS position update
+
+### Screen Layout
+
+```
+┌─────────────────────┐
+│  Jun 7    [Moon 🌙] │  ← date (left) + moon phase icon + label (top-right circle)
+│  Rio de Jan...      │  ← station name (truncated to ~12 chars)
+│                     │
+│  06:14 L  0.1m      │  ← tide table rows (time, H/L, height)
+│  12:38 H  1.4m      │
+│  18:52 L  0.2m      │
+│  01:03 H  1.3m      │
+└─────────────────────┘
+```
+
+Page indicators on the left edge show which day you are viewing. Station indicators on the right edge show which station is active.
+
+---
+
+## Data Refresh
+
+### Automatic (background)
+
+If **Auto-Update Data** is enabled in the Garmin Connect app settings, GarTides schedules a background wake-up approximately once per day, timed for around **2am local time**. The watch connects to your phone and silently downloads fresh tide data for all configured stations. No action is needed from you.
+
+If the watch is out of Bluetooth range at 2am the refresh is skipped and retried the following day.
+
+### Manual
+
+When you open the widget and a station has no data (or data has expired), the app shows:
+
+> *"No data. Hold MENU for options."*
+
+Long-press MENU, choose **Station Data → Get Data** or confirm the download prompt that appears automatically. The app fetches data for the current station immediately.
+
+You can also trigger a manual refresh for all stations via the menu at any time.
+
+### Data window fetched
+
+Each API call to Stormglass requests:
+
+| Boundary | Value |
+|----------|-------|
+| Start | 14 hours before today's midnight (captures overnight tides) |
+| End | 7 days + 6 hours from now |
+
+This gives roughly **7 days of tide extremes** per station per fetch. The data is stored on-device and survives app restarts.
+
+### Stormglass API usage
+
+Each refresh fetches one request per configured station (up to 3). The free Stormglass tier allows **10 requests per day**, so daily auto-refresh of 3 stations uses 3 of those 10 requests.
+
+---
+
+## Setup
+
+### 1. Get a Stormglass API key
+
+Create a free account at [stormglass.io](https://stormglass.io) and copy your API key.
+
+### 2. Configure the app in Garmin Connect
+
+Open the **GarTides** widget settings in the Garmin Connect app (or Garmin Express) and set:
+
+- **Stormglass API Key** — paste your key here
+- **Station 1–3 Name** — display name shown on the watch
+- **Station 1–3 Latitude / Longitude** — decimal degrees (e.g. `48.4284`, `-123.3656`)
+- **Station 1–3: Use GPS** — enable to use your watch's current GPS position instead of fixed coordinates
+- **Units** — System / Metric / Imperial
+- **Auto-Update Data** — enable for daily background refresh (recommended)
+
+### 3. Download data
+
+Open the widget on the watch. If no data is present you will be prompted to download it. Confirm to fetch tide data for the current station.
+
+### Optional: build with your own defaults (sideloading)
+
+If you sideload builds instead of installing from the store, you can bake your API key and stations into the build so you don't have to enter them in Garmin Connect. Create `resources-local/properties.xml` (it is git-ignored, so it never gets committed) and override any property from `resources/properties.xml`:
+
+```xml
+<resources>
+    <properties>
+        <property id="apiKey" type="string">YOUR_STORMGLASS_KEY</property>
+        <property id="station1Name" type="string">My Beach</property>
+        <property id="station1Lat" type="string">48.4284</property>
+        <property id="station1Lng" type="string">-123.3656</property>
+    </properties>
+</resources>
+```
+
+`monkey.jungle` layers this folder over `resources/`; without it the build uses the blank defaults.
+
+---
 
 ## Permissions
 
-The following permissions are required for complete functionality of the app:
- * Background
-   - Used to automatically download tide station data on a regular schedule in the background. 
- * Communications
-   - Used to obtain tide data from the online APIs, see [Data Sources](#data-sources).
- * Positioning
-   - Used to find the tide stations nearest to your current position.
+| Permission | Purpose |
+|------------|---------|
+| **Background** | Daily automatic tide data refresh at ~2am |
+| **Communications** | HTTP requests to the Stormglass API |
+| **Positioning** | GPS-based station coordinates (when "Use GPS" is enabled) |
+
+---
 
 ## Device Support
 
-This app was primarily designed with the Forerunner 745 in mind.  However, the following devices are all supported, but may not all provide the same quality of experience:
+Primarily developed and tested on the **Garmin Instinct 3 Solar 45mm** (176×176 px octagonal display). The app makes use of the top-right circle area of that display for the moon phase indicator.
 
- * Approach® S70 (42mm)
- * Approach® S70 (47mm)
- * Captain Marvel
- * D2™ Air
- * D2™ Air X10
- * D2™ Delta
- * D2™ Delta S
- * D2™ Mach 1
- * D2™ Mach 1 Pro
- * Darth Vader™
- * Descent™ MK2, Descent™MK2i
- * Descent™ MK3 (43mm)
- * Descent™ MK3 (51mm)
- * Descent™ Mk2S
- * Enduro™
- * Enduro™ 2
- * First Avenger
- * Forerunner® 165
- * Forerunner® 165 Music
- * Forerunner® 245
- * Forerunner® 245 Music
- * Forerunner® 255
- * Forerunner® 255 Music
- * Forerunner® 255S
- * Forerunner® 255S Music
- * Forerunner® 265
- * Forerunner® 265S
- * Forerunner® 55
- * Forerunner® 645
- * Forerunner® 645 Music
- * Forerunner® 745
- * Forerunner® 935
- * Forerunner® 945
- * Forerunner® 945 LTE
- * Forerunner® 955, Forerunner® 955 Solar
- * Forerunner® 965
- * MARQ® (Gen 2), MARQ® Carbon Collection
- * MARQ® Commander (Gen 2) – Carbon Edition
- * MARQ™ Adventurer
- * MARQ™ Athlete
- * MARQ™ Aviator
- * MARQ™ Aviator (Gen 2)
- * MARQ™ Captain, MARQ™ Captain: American Magic Edition
- * MARQ™ Commander
- * MARQ™ Driver
- * MARQ™ Expedition
- * MARQ™ Golfer
- * Mercedes-Benz Venu®
- * Mercedes-Benz Venu® 2
- * Mercedes-Benz Venu® 2S
- * Rey™
- * Venu®
- * Venu® 2
- * Venu® 2 Plus
- * Venu® 2S
- * Venu® 3
- * Venu® 3S
- * Venu® Sq.
- * Venu® Sq. 2
- * Venu® Sq. 2 Music
- * Venu® Sq. Music
- * epix™ (Gen 2), quatix® 7 – Sapphire Edition
- * epix™ Pro (42mm)
- * epix™ Pro (47mm), quatix® 7 Pro
- * epix™ Pro (51mm)
- * fēnix® 5, quatix® 5
- * fēnix® 5 Plus
- * fēnix® 5S
- * fēnix® 5S Plus
- * fēnix® 5X, tactix® Charlie
- * fēnix® 5X Plus
- * fēnix® 6
- * fēnix® 6 Dual Power
- * fēnix® 6 Pro, fēnix® 6 Sapphire
- * fēnix® 6 Pro Dual Power
- * fēnix® 6 Pro Solar
- * fēnix® 6 Solar
- * fēnix® 6S
- * fēnix® 6S Dual Power
- * fēnix® 6S Pro, fēnix® 6S Sapphire
- * fēnix® 6S Pro Dual Power
- * fēnix® 6S Pro Solar
- * fēnix® 6S Solar
- * fēnix® 6X Pro, fēnix® 6X Sapphire, fēnix® 6X Pro Solar, tactix® Delta Sapphire, quatix® 6X Solar, tactix® Delta Solar, tactix® Delta Solar Ballistics
- * fēnix® 7, quatix® 7
- * fēnix® 7 Pro, fēnix® 7 Pro – Solar Edition, fēnix® 7 Pro – Sapphire Solar Edition
- * fēnix® 7 Pro – Solar Edition (No Wi-Fi®)
- * fēnix® 7S, fēnix® 7S– Solar Edition, fēnix® 7S– Sapphire Solar Edition
- * fēnix® 7S Pro, fēnix® 7S Pro– Sapphire Solar Edition
- * fēnix® 7X, fēnix® 7X - Solar Edition, fēnix® 7X– Sapphire Solar Edition, quatix® 7X – Solar Edition
- * fēnix® 7X Pro, fēnix® 7X Pro– Sapphire Solar Edition
- * fēnix® 7X Pro No Wi-Fi
- * fēnix® Chronos
- * quatix® 6
- * quatix® 6X, quatix® 6X Solar, quatix® 6X Dual Power
- * tactix® 7, tactix® 7 – Pro Ballistics Edition, tactix® 7 – Pro Edition
- * tactix® 7 – AMOLED Edition
- * vívoactive® 3 Music
- * vívoactive® 4
- * vívoactive® 4S, GarminActive S
- * vívoactive® 5
+Other devices listed in `manifest.xml` may work but the layout is not optimised for them.
+
+---
 
 ## Language Support
 
-The main language is English.  A Google-translate version of French localization strings is included as well.
+- **English** (primary)
+- **French** (settings labels, partial — machine translated)
 
-## Data Sources
-List of tide stations:
-https://tides.gc.ca/en/stations
+Moon phase labels on the watch are displayed in **Portuguese**: Nova, Cresc, Q.Cr, G.Cr, Cheia, G.Mg, Q.Mg, Ming.
 
-API documentation:
-https://api.iwls-sine.azure.cloud-nuage.dfo-mpo.gc.ca/swagger-ui/index.html
+---
+
+## Data Source
+
+Tide predictions are provided by the **Stormglass API**:
+
+- Endpoint: `https://api.stormglass.io/v2/tide/extremes/point`
+- Documentation: https://docs.stormglass.io
+
+---
 
 ## Disclaimer
-The product names, logos, brands, and other trademarks referred to within this
-project are the property of their respective trademark holders.  This project
-is not affiliated with, sponsored by, or endorsed by Garmin.
 
-This code and application are provided "as is" and for informational purposes.
-All information is provided with no guarantee of completeness, accuracy,
-timeliness or of the results obtained from the use of this information, and
-without warranty of any kind, express or implied, including, but not limited to
-warranties of performance, merchantability and fitness for a particular purpose.
+This project is not affiliated with, sponsored by, or endorsed by Garmin or Stormglass.
 
-The author will not be liable to you or anyone else for any decision made or
-action taken in reliance on the information given by the code or application or
-for any consequential, special or similar damages, even if advised of the
-possibility of such damages.  
+Tide predictions are provided for informational purposes only. Do not rely solely on this app for navigation, diving, or any activity where tidal information is safety-critical. Always verify tide data with official sources.
+
+This code and application are provided "as is" without warranty of any kind, express or implied.

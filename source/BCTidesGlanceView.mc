@@ -2,108 +2,129 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
+using Toybox.Time;
+using Toybox.Time.Gregorian;
+
 (:glance)
 class BCTidesGlanceView extends WatchUi.GlanceView {
     function initialize() {
         GlanceView.initialize();
     }
 
-    function drawNoDataMessage(dc as Dc) as Void {
-        dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(0, 0, Graphics.FONT_GLANCE_NUMBER, "No tide data available.", Graphics.TEXT_JUSTIFY_LEFT);
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(0, dc.getFontHeight(Graphics.FONT_GLANCE_NUMBER), Graphics.FONT_GLANCE, "Open app to load data.", Graphics.TEXT_JUSTIFY_LEFT);
+    // "2h05", "45min", "1h", "now"
+    private function formatCountdown(seconds as Number) as String {
+        if (seconds <= 0) { return "now"; }
+        var h = seconds / 3600;
+        var m = (seconds % 3600) / 60;
+        if (h == 0) { return m.toString() + "min"; }
+        if (m == 0) { return h.toString() + "h"; }
+        return h.toString() + "h" + m.format("%02d");
     }
 
-    function drawGlanceNew(dc as Dc, currentHeight as Number, nextEventHeight as Number, nextEventTime as Number, nextEventType as String, currentStation as String) as Void {
-        //var currentDirection = nextEventType.equals("H") ? "rising" : "falling";
-        
-        var units = PropUtil.units();
-        var heightMultiplier = PropUtil.heightMultiplier();
-        nextEventHeight *= heightMultiplier;
-        currentHeight *= heightMultiplier;
+    // Horizontal bar: white = rising, DK_GRAY = falling, 2px gap between segments.
+    // 24-hour window: 6 hours before now (left edge) to 18 hours ahead (right edge).
+    // Yellow 2px marker at the 25% position = "now".
+    private function drawTideBar(dc as Dc, data as Array, now as Number,
+                                  barX as Number, barY as Number,
+                                  barW as Number, barH as Number) as Void {
+        var windowSec   = 86400;          // 24 h in seconds
+        var windowStart = now - 6 * 3600; // 6 h before now
+        var windowEnd   = windowStart + windowSec;
+        var gap         = 2;
 
-        var lineHeight = dc.getFontHeight(Graphics.FONT_GLANCE); // FONT_GLANCE:  FR745: 19 FR965: 42     FONT_GLANCE_NUMBER:  FR745: 19 FR965: 53
-        lineHeight *= 0.85; // FR745: 16
+        for (var i = 0; i < data.size() - 1; i++) {
+            var e0 = data[i]     as Array;
+            var e1 = data[i + 1] as Array;
+            var t0 = e0[0] as Number;
+            var h0 = e0[1] as Float;
+            var t1 = e1[0] as Number;
+            var h1 = e1[1] as Float;
 
-        var numHeight = dc.getFontHeight(Graphics.FONT_NUMBER_MEDIUM);
+            if (t1 <= windowStart || t0 >= windowEnd) { continue; }
 
+            var seg0 = t0 < windowStart ? windowStart : t0;
+            var seg1 = t1 > windowEnd   ? windowEnd   : t1;
 
-		dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
+            var x0   = barX + (seg0 - windowStart) * barW / windowSec;
+            var x1   = barX + (seg1 - windowStart) * barW / windowSec;
+            var segW = x1 - x0 - gap;
+            if (segW < 1) { segW = 1; }
 
-        // Height with units
-        var heightString = currentHeight.format("%.1f");
-        dc.drawText(0, - numHeight * 0.19, Graphics.FONT_NUMBER_MEDIUM, heightString, Graphics.TEXT_JUSTIFY_LEFT);
-        dc.drawText(dc.getTextWidthInPixels(heightString, Graphics.FONT_NUMBER_MEDIUM), numHeight * 0.72 - dc.getFontHeight(Graphics.FONT_LARGE), Graphics.FONT_LARGE, units, Graphics.TEXT_JUSTIFY_LEFT);
+            if (h1 > h0) {
+                // Rising: solid white
+                dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(x0, barY, segW, barH);
+            } else {
+                // Falling: checkerboard dither — fillRectangle(1,1) draws a single pixel,
+                // unlike drawLine(x,y,x,y) which is a zero-length no-op on Garmin.
+                dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+                for (var py = barY; py < barY + barH; py++) {
+                    var startX = x0 + ((x0 + py) % 2);
+                    for (var px = startX; px < x0 + segW; px += 2) {
+                        dc.fillRectangle(px, py, 1, 1);
+                    }
+                }
+            }
+        }
 
-		dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-
-        // Draw position indicator
-        var radius = lineHeight * .25;
-        var center_x = lineHeight * 0.4375;
-        var center_y = numHeight * 0.66 + lineHeight * .5;
-        var lineLength = lineHeight * .8125;
-        dc.drawCircle(center_x, center_y, radius);
-        dc.drawLine(1, center_y, lineLength + 1, center_y); // horizontal
-        dc.drawLine(center_x, center_y - lineLength / 2, center_x, center_y + lineLength / 2); // vertical line
-
-        // Station Name
-        dc.drawText(lineLength * 1.3, numHeight * 0.66, Graphics.FONT_GLANCE, currentStation, Graphics.TEXT_JUSTIFY_LEFT);
-    }
-
-    function drawGlance(dc as Dc, currentHeight as Number, nextEventHeight as Number, nextEventTime as Number, nextEventType as String, currentStation as String) as Void {
-        var currentDirection = nextEventType.equals("H") ? "rising" : "falling";
-        
-        var units = PropUtil.units();
-        var heightMultiplier = PropUtil.heightMultiplier();
-        nextEventHeight *= heightMultiplier;
-        currentHeight *= heightMultiplier;
-
-        var lineHeight = dc.getFontHeight(Graphics.FONT_GLANCE); // FONT_GLANCE:  FR745: 19 FR965: 42     FONT_GLANCE_NUMBER:  FR745: 19 FR965: 53
-        lineHeight *= 0.85; // FR745: 16
-        //System.println("FontHeight FONT_GLANCE: " + lineHeight);
-        //System.println("FontHeight FONT_GLANCE_NUMBER: " + dc.getFontHeight(Graphics.FONT_GLANCE_NUMBER));
-
-        dc.drawText(0, 0, Graphics.FONT_GLANCE, nextEventHeight.format("%.1f") + units + " " + nextEventType + " in " + nextEventTime + "min", Graphics.TEXT_JUSTIFY_LEFT);
-
-        // Draw position indicator
-        // Numbers are a bit odd; this is just what looks good.
-        var radius = lineHeight * .25;
-        var center_x = lineHeight * 0.4375;
-        var center_y = lineHeight * 1.61;
-        var lineLength = lineHeight * .8125;
-        dc.drawCircle(center_x, center_y, radius);
-        dc.drawLine(1, center_y, lineLength + 1, center_y); // horizontal
-        dc.drawLine(center_x, center_y - lineLength / 2 + 1, center_x, center_y + lineLength / 2 + 1); // vertical line
-
-        dc.drawText(lineLength * 1.3, lineHeight, Graphics.FONT_GLANCE, currentStation, Graphics.TEXT_JUSTIFY_LEFT);
-
-		dc.setColor(Graphics.COLOR_BLUE,Graphics.COLOR_TRANSPARENT);
-        dc.drawText(0, lineHeight * 2, Graphics.FONT_GLANCE, currentHeight.format("%.1f") + units + " and " + currentDirection, Graphics.TEXT_JUSTIFY_LEFT);
+        // "Now" marker: 2px wide, 1px taller than the bar, yellow
+        var markerX = barX + barW * 6 / 24;
+        dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_TRANSPARENT);
+        dc.fillRectangle(markerX, barY - 4, 2, barH + 8);
     }
 
     function onUpdate(dc as Dc) {
-		var now = Time.now().value();
+        var stationIndex = StorageUtil.getLastStationIndex();
+        var data         = TideUtil.tideData(stationIndex);
+        var now          = Time.now().value().toNumber();
 
-        var nextEvent = TideUtil.getNextEvent(now, /*stationIndex*/0);
-        if (nextEvent[:eventTime] == null) {
-            drawNoDataMessage(dc);
+        if (data == null || data.size() < 2) {
+            dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(0, 0, Graphics.FONT_GLANCE, "No tide data", Graphics.TEXT_JUSTIFY_LEFT);
+            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(0, dc.getFontHeight(Graphics.FONT_GLANCE), Graphics.FONT_GLANCE,
+                "Open app to load", Graphics.TEXT_JUSTIFY_LEFT);
             return;
         }
 
-        if (TideUtil.tideData(0) != null) {
-            var currentHeight = TideUtil.getHeightAtT(now, 1200, 0)[:height];
-            if (currentHeight == null) {
-                drawNoDataMessage(dc);
-                return;
-            }
-
-            var nextEventHeight = nextEvent[:eventHeight];
-            var nextEventTime = (nextEvent[:eventHeight] - now) / 60;
-            var nextEventType = nextEvent[:eventType]; // "H" or "L"
-            var currentStation = StorageUtil.getStationName(0);
-
-            drawGlanceNew(dc, currentHeight, nextEventHeight, nextEventTime, nextEventType, currentStation);
+        var nextEvent = TideUtil.getNextEvent(now, stationIndex);
+        var nextTime  = nextEvent[:eventTime] as Number?;
+        if (nextTime == null) {
+            dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(0, 0, Graphics.FONT_GLANCE, "Data expired", Graphics.TEXT_JUSTIFY_LEFT);
+            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(0, dc.getFontHeight(Graphics.FONT_GLANCE), Graphics.FONT_GLANCE,
+                "Open app to refresh", Graphics.TEXT_JUSTIFY_LEFT);
+            return;
         }
-    } 
+
+        var mult       = PropUtil.heightMultiplier();
+        var units      = PropUtil.units();
+        var hOffset    = StorageUtil.getStationHeightOffset(stationIndex);
+        var nextHeight = ((nextEvent[:eventHeight] as Float) + hOffset) * mult;
+        var nextType   = nextEvent[:eventType] as String;
+        var secsUntil  = nextTime - now;
+
+        var stationName = StorageUtil.getStationName(stationIndex);
+        if (stationName.length() > 14) {
+            stationName = stationName.substring(0, 12) + "..";
+        }
+
+        var fH   = dc.getFontHeight(Graphics.FONT_GLANCE);
+        var barH = 8;
+        var barY = fH + 3;
+
+        // ── Station name ──────────────────────────────────────────────────────
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(0, 0, Graphics.FONT_GLANCE, stationName, Graphics.TEXT_JUSTIFY_LEFT);
+
+        // ── Tide bar ──────────────────────────────────────────────────────────
+        drawTideBar(dc, data, now, 0, barY, dc.getWidth(), barH);
+
+        // ── Next tide: "L 0.9m in 2h30" ──────────────────────────────────────
+        var line = nextType + " " + nextHeight.format("%.2f") + units +
+                   " in " + formatCountdown(secsUntil);
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(0, barY + barH + 3, Graphics.FONT_GLANCE, line, Graphics.TEXT_JUSTIFY_LEFT);
+    }
 }

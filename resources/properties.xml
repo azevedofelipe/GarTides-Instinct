@@ -1,11 +1,29 @@
 <resources>
     <properties>
-        <property id="unitsProp" type="number">0</property>
-        <property id="dataLabelProp" type="number">0</property>
-        <property id="displayProp" type="number">0</property>
-        <property id="zoneProp" type="number">0</property>
+        <property id="apiKey" type="string"></property>
+
+        <property id="station1Name" type="string">Station 1</property>
+        <property id="station1Lat" type="string"></property>
+        <property id="station1Lng" type="string"></property>
+        <property id="station1UseGPS" type="boolean">0</property>
+
+        <property id="station2Name" type="string">Station 2</property>
+        <property id="station2Lat" type="string"></property>
+        <property id="station2Lng" type="string"></property>
+        <property id="station2UseGPS" type="boolean">0</property>
+
+        <property id="station3Name" type="string">Station 3</property>
+        <property id="station3Lat" type="string"></property>
+        <property id="station3Lng" type="string"></property>
+        <property id="station3UseGPS" type="boolean">0</property>
+
+        <property id="station1HeightOffset" type="string">0.0</property>
+        <property id="station2HeightOffset" type="string">0.0</property>
+        <property id="station3HeightOffset" type="string">0.0</property>
+
+        <property id="datumProp" type="number">0</property>
+        <property id="unitsProp" type="number">1</property>
         <property id="backgroundDownloadProp" type="boolean">1</property>
-        <property id="fillGraphProp" type="boolean">0</property>
-        <property id="appVersion" type="string">0.1a</property>
+        <property id="appVersion" type="string">0.2</property>
     </properties>
 </resources>

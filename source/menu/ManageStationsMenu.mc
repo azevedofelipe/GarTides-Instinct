@@ -6,25 +6,29 @@ using Toybox.WatchUi;
 module ManageStationsMenu {
     function pushMenu() as Void {
         var menu = new WatchUi.CustomMenu(getApp().screenHeight / 3, Graphics.COLOR_WHITE, {
-                :title => new CustomMenuTitle(Rez.Strings.selectStationMenuTitle), :theme => null});
+            :title => new CustomMenuTitle(Rez.Strings.mainMenuLabelManageStations),
+            :theme => null
+        });
 
         for (var i = 0; i < getApp().stationsToShow; i++) {
-            var stationName = StorageUtil.getStationName(i);
-            var stationCode = StorageUtil.getStationCode(i);
-            menu.addItem(
-                new BasicCustomMenuItem(
-                    i, // identifier
-                    stationCode == null ? Rez.Strings.manageStationsMenuAdd : stationName,
-                    "" // Sub-Label
-                )
-            );
-            if (stationCode == null) {
-                break;
-            }
+            var name   = StorageUtil.getStationName(i);
+            var subLbl = _stationSubLabel(i);
+            menu.addItem(new BasicCustomMenuItem(i, name, subLbl));
         }
 
-        var delegate = new ManageStationsMenuDelegate();
-        WatchUi.pushView(menu, delegate, WatchUi.SLIDE_IMMEDIATE);
+        WatchUi.pushView(menu, new ManageStationsMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
+    }
+
+    function _stationSubLabel(stationIndex as Number) as String {
+        if (StorageUtil.getStationUseGPS(stationIndex)) {
+            return WatchUi.loadResource(Rez.Strings.stationSourceGPS) as String;
+        }
+        var lat = StorageUtil.getStationLat(stationIndex);
+        var lng = StorageUtil.getStationLng(stationIndex);
+        if (lat == null || lng == null) {
+            return WatchUi.loadResource(Rez.Strings.stationNotConfigured) as String;
+        }
+        return lat.format("%.3f") + ", " + lng.format("%.3f");
     }
 }
 
@@ -34,7 +38,6 @@ class ManageStationsMenuDelegate extends WatchUi.Menu2InputDelegate {
     }
 
     function onSelect(item) as Void {
-        var addDeleteOption = StorageUtil.getStationCode(item.getId() as Number) != null;
-        StationMenu.pushMenu(/*stationIndex*/item.getId() as Number, addDeleteOption);
+        StationMenu.pushMenu(item.getId() as Number);
     }
 }

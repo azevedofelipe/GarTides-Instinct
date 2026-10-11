@@ -2,6 +2,65 @@
     <setting propertyKey="@Properties.appVersion" title="@Strings.appVersionTitle">
         <settingConfig type="alphaNumeric" readonly="true"/>
     </setting>
+    <setting propertyKey="@Properties.apiKey" title="@Strings.apiKeyTitle" prompt="@Strings.apiKeyPrompt">
+        <settingConfig type="alphaNumeric"/>
+    </setting>
+
+    <setting propertyKey="@Properties.station1Name" title="@Strings.station1NameTitle" prompt="@Strings.stationNamePrompt">
+        <settingConfig type="alphaNumeric"/>
+    </setting>
+    <setting propertyKey="@Properties.station1UseGPS" title="@Strings.station1UseGPSTitle" prompt="@Strings.stationUseGPSPrompt">
+        <settingConfig type="boolean"/>
+    </setting>
+    <setting propertyKey="@Properties.station1Lat" title="@Strings.station1LatTitle" prompt="@Strings.stationLatPrompt">
+        <settingConfig type="alphaNumeric"/>
+    </setting>
+    <setting propertyKey="@Properties.station1Lng" title="@Strings.station1LngTitle" prompt="@Strings.stationLngPrompt">
+        <settingConfig type="alphaNumeric"/>
+    </setting>
+    <setting propertyKey="@Properties.station1HeightOffset" title="@Strings.station1HeightOffsetTitle" prompt="@Strings.stationHeightOffsetPrompt">
+        <settingConfig type="alphaNumeric"/>
+    </setting>
+
+    <setting propertyKey="@Properties.station2Name" title="@Strings.station2NameTitle" prompt="@Strings.stationNamePrompt">
+        <settingConfig type="alphaNumeric"/>
+    </setting>
+    <setting propertyKey="@Properties.station2UseGPS" title="@Strings.station2UseGPSTitle" prompt="@Strings.stationUseGPSPrompt">
+        <settingConfig type="boolean"/>
+    </setting>
+    <setting propertyKey="@Properties.station2Lat" title="@Strings.station2LatTitle" prompt="@Strings.stationLatPrompt">
+        <settingConfig type="alphaNumeric"/>
+    </setting>
+    <setting propertyKey="@Properties.station2Lng" title="@Strings.station2LngTitle" prompt="@Strings.stationLngPrompt">
+        <settingConfig type="alphaNumeric"/>
+    </setting>
+    <setting propertyKey="@Properties.station2HeightOffset" title="@Strings.station2HeightOffsetTitle" prompt="@Strings.stationHeightOffsetPrompt">
+        <settingConfig type="alphaNumeric"/>
+    </setting>
+
+    <setting propertyKey="@Properties.station3Name" title="@Strings.station3NameTitle" prompt="@Strings.stationNamePrompt">
+        <settingConfig type="alphaNumeric"/>
+    </setting>
+    <setting propertyKey="@Properties.station3UseGPS" title="@Strings.station3UseGPSTitle" prompt="@Strings.stationUseGPSPrompt">
+        <settingConfig type="boolean"/>
+    </setting>
+    <setting propertyKey="@Properties.station3Lat" title="@Strings.station3LatTitle" prompt="@Strings.stationLatPrompt">
+        <settingConfig type="alphaNumeric"/>
+    </setting>
+    <setting propertyKey="@Properties.station3Lng" title="@Strings.station3LngTitle" prompt="@Strings.stationLngPrompt">
+        <settingConfig type="alphaNumeric"/>
+    </setting>
+    <setting propertyKey="@Properties.station3HeightOffset" title="@Strings.station3HeightOffsetTitle" prompt="@Strings.stationHeightOffsetPrompt">
+        <settingConfig type="alphaNumeric"/>
+    </setting>
+
+    <setting propertyKey="@Properties.datumProp" title="@Strings.datumSettingTitle" prompt="@Strings.datumSettingPrompt">
+        <settingConfig type="list">
+            <listEntry value="0">@Strings.datumSettingMSL</listEntry>
+            <listEntry value="1">@Strings.datumSettingMLLW</listEntry>
+        </settingConfig>
+    </setting>
+
     <setting propertyKey="@Properties.unitsProp" title="@Strings.unitsSettingTitle" prompt="@Strings.unitsSettingPrompt">
         <settingConfig type="list">
             <listEntry value="0">@Strings.unitsSettingSystem</listEntry>
@@ -9,29 +68,7 @@
             <listEntry value="2">@Strings.unitsSettingImperial</listEntry>
         </settingConfig>
     </setting>
-    <setting propertyKey="@Properties.dataLabelProp" title="@Strings.labelSettingTitle" prompt="@Strings.labelSettingPrompt">
-        <settingConfig type="list">
-            <listEntry value="0">@Strings.labelSettingValHeight</listEntry>
-            <listEntry value="1">@Strings.labelSettingValTime</listEntry>
-            <listEntry value="2">@Strings.labelSettingValNone</listEntry>
-        </settingConfig>
-    </setting>
-    <setting propertyKey="@Properties.displayProp" title="@Strings.displaySettingTitle" prompt="@Strings.displaySettingPrompt">
-        <settingConfig type="list">
-            <listEntry value="0">@Strings.displaySettingValGraph</listEntry>
-            <listEntry value="1">@Strings.displaySettingValTable</listEntry>
-        </settingConfig>
-    </setting>
-    <setting propertyKey="@Properties.zoneProp" title="@Strings.zoneSettingTitle" prompt="@Strings.zoneSettingPrompt">
-        <settingConfig type="list">
-            <listEntry value="0">@Strings.zoneSettingValSouth</listEntry>
-            <listEntry value="1">@Strings.zoneSettingValNorth</listEntry>
-        </settingConfig>
-    </setting>
     <setting propertyKey="@Properties.backgroundDownloadProp" title="@Strings.backgroundDownloadSettingTitle" prompt="@Strings.backgroundDownloadSettingPrompt">
-        <settingConfig type="boolean"/>
-    </setting>
-    <setting propertyKey="@Properties.fillGraphProp" title="@Strings.fillGraphTitle" prompt="@Strings.fillGraphPrompt">
         <settingConfig type="boolean"/>
     </setting>
 </settings>

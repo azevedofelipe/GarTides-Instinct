@@ -2,3 +2,6 @@ bin/**
 build/**
 build_artifacts/** 
 export/**
+
+# Local-only settings defaults (API key, personal stations)
+resources-local/

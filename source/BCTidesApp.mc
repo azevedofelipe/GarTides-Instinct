@@ -60,13 +60,13 @@ class BCTidesApp extends Application.AppBase {
     }
 
     // Return the initial view of your application here
-    function getInitialView() as Array<Views or InputDelegates>? {
+    function getInitialView() as [Views] or [Views, InputDelegates] {
         loadData();
         view = new BCTidesView(me);
         delegate = new BCTidesDelegate(view);
         var mySettings = System.getDeviceSettings();
         screenHeight = mySettings.screenHeight;
-        return [view, delegate] as Array<Views or InputDelegates>;
+        return [view, delegate] as [Views, InputDelegates];
     }
 
     (:glance)
@@ -75,7 +75,7 @@ class BCTidesApp extends Application.AppBase {
     }
 
     // Get service delegates to run background tasks for the app
-    public function getServiceDelegate() as Array<ServiceDelegate> {
+    public function getServiceDelegate() as [ServiceDelegate] {
         background = true;
         if (PropUtil.getBackgroundDownload()) {
             var duration26h = new Time.Duration(Time.Gregorian.SECONDS_PER_DAY + 2 * Time.Gregorian.SECONDS_PER_HOUR);
@@ -84,7 +84,7 @@ class BCTidesApp extends Application.AppBase {
             //System.println("Setting background timer for " + eventTime.value());
         }
 
-        return [new BackgroundTimerServiceDelegate()] as Array<ServiceDelegate>;
+        return [new BackgroundTimerServiceDelegate()] as [ServiceDelegate];
     }
 }
 
